@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск расписания - РАНХиГС</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Поиск расписания</h1>
+            <h2>Колледж РАНХиГС</h2>
+        </header>
+
+        <nav class="breadcrumbs">
+            <a href="index.html">Главная</a> > <span>Поиск</span>
+        </nav>
+
+        <div class="search-form">
+            <h3>Найдите свое расписание</h3>
+            
+            <div class="form-group">
+                <label for="group-select">Группа:</label>
+                <select id="group-select">
+                    <option value="">Все группы</option>
+                    <option value="24исп6">24исп6</option>
+                    <option value="24исп5">24исп5</option>
+                    <option value="23исп4">23исп4</option>
+                    <option value="22исп3">22исп3</option>
+                    <option value="23тур1">23тур1</option>
+                    <option value="23тур2">23тур2</option>
+                    <option value="24тур1">24тур1</option>
+                    <option value="24тур2">24тур2</option>
+                    <option value="К-101">К-101</option>
+                    <option value="К-102">К-102</option>
+                    <option value="К-103">К-103</option>
+                    <option value="К-104">К-104</option>
+                    <option value="К-105">К-105</option>
+                    <option value="К-106">К-106</option>
+                    <option value="К-107">К-107</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="teacher-input">Преподаватель:</label>
+                <input type="text" id="teacher-input" placeholder="Иванов А.П.">
+            </div>
+
+            <div class="form-group">
+                <label for="classroom-input">Аудитория:</label>
+                <input type="text" id="classroom-input" placeholder="301">
+            </div>
+
+            <div class="buttons">
+                <button onclick="searchSchedule()" class="btn btn-primary">Найти</button>
+                <button onclick="clearSearch()" class="btn btn-secondary">Очистить</button>
+                <a href="index.html" class="btn btn-secondary">На главную</a>
+            </div>
+        </div>
+
+        <div id="results" class="search-results">
+            <!-- Результаты появятся здесь -->
+        </div>
+
+        <footer>
+            <p>© 2024 Расписание колледжа РАНХиГС</p>
+        </footer>
+    </div>
+
+    <script src="data/schedule.js"></script>
+    <script>
+        // Тестовые данные для поиска (в реальном проекте будут в schedule.js)
+        const testData = [
+            {
+                date: "02.01.2024",
+                week: "1 неделя января",
+                group: "24исп6",
+                subject: "Информатика",
+                teacher: "Иванов А.П.",
+                classroom: "301",
+                time: "9:00-10:30"
+            },
+            {
+                date: "03.01.2024", 
+                week: "1 неделя января",
+                group: "24исп5",
+                subject: "Математика",
+                teacher: "Петрова Е.В.",
+                classroom: "302",
+                time: "11:00-12:30"
+            }
+        ];
+
+        function searchSchedule() {
+            const group = document.getElementById('group-select').value;
+            const teacher = document.getElementById('teacher-input').value.toLowerCase();
+            const classroom = document.getElementById('classroom-input').value;
+            
+            let results = [];
+            
+            // Фильтруем данные
+            testData.forEach(item => {
+                let match = true;
+                
+                if (group && item.group !== group) match = false;
+                if (teacher && !item.teacher.toLowerCase().includes(teacher)) match = false;
+                if (classroom && !item.classroom.includes(classroom)) match = false;
+                
+                if (match) {
+                    results.push(item);
+                }
+            });
+            
+            displayResults(results);
+        }
+        
+        function displayResults(results) {
+            const container = document.getElementById('results');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<div class="result-item">По вашему запросу ничего не найдено.</div>';
+                return;
+            }
+            
+            let html = `<h3>Найдено результатов: ${results.length}</h3>`;
+            
+            results.forEach(item => {
+                html += `
+                    <div class="result-item">
+                        <div class="result-header">
+                            <span>${item.date}</span>
+                            <span>${item.time}</span>
+                        </div>
+                        <p><strong>Группа:</strong> ${item.group}</p>
+                        <p><strong>Предмет:</strong> ${item.subject}</p>
+                        <p><strong>Преподаватель:</strong> ${item.teacher}</p>
+                        <p><strong>Аудитория:</strong> ${item.classroom}</p>
+                        <p><small>${item.week}</small></p>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function clearSearch() {
+            document.getElementById('group-select').value = '';
+            document.getElementById('teacher-input').value = '';
+            document.getElementById('classroom-input').value = '';
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
